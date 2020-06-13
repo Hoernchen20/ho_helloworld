@@ -60,7 +60,7 @@ int main(void) {
     uint8_t loramac_datarate = 0;
 
     /* Init peripherie */
-//    _init_unused_pins();
+    _init_unused_pins();
     init_get_vcc();
 
     /* Convert identifiers and application key */
@@ -245,6 +245,7 @@ static void *_recv(void *arg) {
 
 void _init_unused_pins(void) {
     gpio_t unused_pins[] = {
+#if defined(BOARD_BLUEPILL)
         //GPIO_PIN(PORT_A, 0), OUT0
         //GPIO_PIN(PORT_A, 1), OUT1
         //GPIO_PIN(PORT_A, 2), OUT2
@@ -257,7 +258,7 @@ void _init_unused_pins(void) {
         GPIO_PIN(PORT_A, 9),
         GPIO_PIN(PORT_A, 10),
         GPIO_PIN(PORT_A, 11),
-        //GPIO_PIN(PORT_A, 12), //USB pullup
+        //GPIO_PIN(PORT_A, 12), USB pullup
         GPIO_PIN(PORT_A, 13),
         GPIO_PIN(PORT_A, 14),
         GPIO_PIN(PORT_A, 15),
@@ -277,6 +278,7 @@ void _init_unused_pins(void) {
         //GPIO_PIN(PORT_B, 14), MISO
         //GPIO_PIN(PORT_B, 15), MOSI
         GPIO_PIN(PORT_C, 13)};
+#endif
 
     for (uint8_t i = 0; i < (sizeof(unused_pins) / sizeof(gpio_t)); i++) {
         gpio_init(unused_pins[i], GPIO_IN_PD);
