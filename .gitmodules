@@ -1,3 +1,6 @@
 [submodule "RIOT"]
 	path = RIOT
 	url = https://github.com/Hoernchen20/RIOT.git
+[submodule "ho_helper_functions"]
+	path = ho_helper_functions
+	url = https://github.com/Hoernchen20/ho_helper_functions.git

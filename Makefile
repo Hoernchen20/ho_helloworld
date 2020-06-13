@@ -40,12 +40,16 @@ USEMODULE += fmt
 USEMODULE += semtech_loramac_rx
 #USEMODULE += stdio_null
 USEMODULE += sx1276
+USEMODULE += ho_scaling
 
 FEATURES_REQUIRED += periph_adc
 FEATURES_REQUIRED += periph_rtc
 
+INCLUDES += -I$(CURDIR)/ho_helper_functions/scaling
+DIRS += $(CURDIR)/ho_helper_functions/scaling
+
 # Specify custom dependencies for your application here
-APPDEPS = scaling.h
+#APPDEPS = ho_helper_functions/scaling.h
 
 # This has to be the absolute path to the RIOT base directory:
 RIOTBASE ?= $(CURDIR)/RIOT
