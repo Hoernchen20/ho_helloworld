@@ -5,9 +5,9 @@
 #include <time.h>
 
 #include "fmt.h"
+#include "get_vcc.h"
 #include "msg.h"
 #include "net/loramac.h"
-#include "periph/adc.h"
 #include "periph/pm.h"
 #include "periph/rtc.h"
 #include "scaling.h"
@@ -29,9 +29,6 @@
 #ifndef DEFAULT_RESOLUTION
 #define DEFAULT_RESOLUTION 0
 #endif /* DEFAULT_RESOLUTION */
-
-#define ADC_VREF_INT 6
-#define VREF_INT_CAL 0x1FF80078
 
 /* Private macro -----------------------------------------------------*/
 
@@ -55,7 +52,6 @@ static int _prepare_next_alarm(void);
 static void _send_message(uint8_t length);
 static void *sender(void *arg);
 static void *_recv(void *arg);
-float _get_vcc(void);
 void _init_unused_pins(void);
 
 /* Private functions -------------------------------------------------*/
@@ -65,7 +61,7 @@ int main(void) {
 
     /* Init peripherie */
 //    _init_unused_pins();
-    adc_init(ADC_LINE(ADC_VREF_INT));
+    init_get_vcc();
 
     /* Convert identifiers and application key */
     fmt_hex_bytes(deveui, DEVEUI);
@@ -176,12 +172,12 @@ static void *sender(void *arg) {
 
         if (resolution == 0) {
             semtech_loramac_set_tx_port(&loramac, 1);  //TODO Port enum
-            uint8_t vbat = (uint8_t)scaling_float(_get_vcc(), 2.0, 4.0, 0.0, 255.0, LIMIT_OUTPUT);
+            uint8_t vbat = (uint8_t)scaling_float(get_vcc(), 2.0, 4.0, 0.0, 255.0, LIMIT_OUTPUT);
             message[0] = (uint8_t)vbat;
             _send_message(1);
         } else if (resolution == 1) {
             semtech_loramac_set_tx_port(&loramac, 2);  //TODO Port enum
-            uint16_t vbat = (uint16_t)scaling_float(_get_vcc(), 2.0, 4.0, 0.0, 65535.0, LIMIT_OUTPUT);
+            uint16_t vbat = (uint16_t)scaling_float(get_vcc(), 2.0, 4.0, 0.0, 65535.0, LIMIT_OUTPUT);
             message[0] = (uint8_t)(vbat >> 8);
             message[1] = (uint8_t)(vbat);
             _send_message(2);
@@ -245,12 +241,6 @@ static void *_recv(void *arg) {
         }
     }
     return NULL;
-}
-
-float _get_vcc(void) {
-    uint16_t *vref_int_cal = ((uint16_t*) ((uint32_t) 0x1FF80078));
-    float vbat = 3.0 * *vref_int_cal / adc_sample(ADC_LINE(ADC_VREF_INT), ADC_RES_12BIT);
-    return vbat;
 }
 
 void _init_unused_pins(void) {

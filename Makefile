@@ -41,12 +41,16 @@ USEMODULE += semtech_loramac_rx
 #USEMODULE += stdio_null
 USEMODULE += sx1276
 USEMODULE += ho_scaling
+USEMODULE += ho_get_vcc
 
 FEATURES_REQUIRED += periph_adc
 FEATURES_REQUIRED += periph_rtc
 
 INCLUDES += -I$(CURDIR)/ho_helper_functions/scaling
 DIRS += $(CURDIR)/ho_helper_functions/scaling
+
+INCLUDES += -I$(CURDIR)/ho_helper_functions/get_vcc
+DIRS += $(CURDIR)/ho_helper_functions/get_vcc
 
 # Specify custom dependencies for your application here
 #APPDEPS = ho_helper_functions/scaling.h
