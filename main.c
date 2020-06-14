@@ -255,8 +255,8 @@ void _init_unused_pins(void) {
         GPIO_PIN(PORT_A, 6),
         GPIO_PIN(PORT_A, 7),
         //GPIO_PIN(PORT_A, 8),MCO
-        GPIO_PIN(PORT_A, 9),
-        GPIO_PIN(PORT_A, 10),
+        //GPIO_PIN(PORT_A, 9), //UART TX
+        //GPIO_PIN(PORT_A, 10), //UART RX
         GPIO_PIN(PORT_A, 11),
         //GPIO_PIN(PORT_A, 12), USB pullup
         GPIO_PIN(PORT_A, 13),
