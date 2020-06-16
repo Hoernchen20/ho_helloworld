@@ -61,7 +61,7 @@ int main(void) {
 
     /* Init peripherie */
     _init_unused_pins();
-    init_get_vcc();
+    adc_init(ADC_LINE(ADC_VREF_INT));
 
     /* Convert identifiers and application key */
     fmt_hex_bytes(deveui, DEVEUI);
@@ -255,8 +255,8 @@ void _init_unused_pins(void) {
         GPIO_PIN(PORT_A, 6),
         GPIO_PIN(PORT_A, 7),
         //GPIO_PIN(PORT_A, 8),MCO
-        //GPIO_PIN(PORT_A, 9), //UART TX
-        //GPIO_PIN(PORT_A, 10), //UART RX
+        //GPIO_PIN(PORT_A, 9), UART TX
+        //GPIO_PIN(PORT_A, 10), UART RX
         GPIO_PIN(PORT_A, 11),
         //GPIO_PIN(PORT_A, 12), USB pullup
         GPIO_PIN(PORT_A, 13),
@@ -279,7 +279,6 @@ void _init_unused_pins(void) {
         //GPIO_PIN(PORT_B, 15), MOSI
         GPIO_PIN(PORT_C, 13)};
 #endif
-
     for (uint8_t i = 0; i < (sizeof(unused_pins) / sizeof(gpio_t)); i++) {
         gpio_init(unused_pins[i], GPIO_IN_PD);
     }
