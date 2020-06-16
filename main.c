@@ -5,9 +5,9 @@
 #include <time.h>
 
 #include "fmt.h"
-#include "get_vcc.h"
 #include "msg.h"
 #include "net/loramac.h"
+#include "periph/adc.h"
 #include "periph/pm.h"
 #include "periph/rtc.h"
 #include "scaling.h"
@@ -21,6 +21,13 @@
 #define SENDER_PRIO (THREAD_PRIORITY_MAIN - 1)
 #define RECV_MSG_QUEUE (4U)
 #define ON_TIME 4
+
+#if defined(BOARD_BLUEPILL)
+#define ADC_VREF_INT 9
+#elif
+#define ADC_VREF_INT 6
+#define VREF_INT_CAL 0x1FF80078
+#endif
 
 #ifndef DEFAULT_PERIOD_SENDING
 #define DEFAULT_PERIOD_SENDING 600
@@ -52,6 +59,7 @@ static int _prepare_next_alarm(void);
 static void _send_message(uint8_t length);
 static void *sender(void *arg);
 static void *_recv(void *arg);
+float get_vcc(void);
 void _init_unused_pins(void);
 
 /* Private functions -------------------------------------------------*/
@@ -241,6 +249,16 @@ static void *_recv(void *arg) {
         }
     }
     return NULL;
+}
+
+float get_vcc(void) {
+#if defined(BOARD_BLUEPILL)
+    float vbat = 4957.744 / adc_sample(ADC_VREF_INT, ADC_RES_12BIT);
+#elif
+    uint16_t *vref_int_cal = ((uint16_t*) ((uint32_t) 0x1FF80078));
+    float vbat = 3.0 * *vref_int_cal / adc_sample(ADC_LINE(ADC_VREF_INT), ADC_RES_12BIT);
+#endif
+    return vbat;
 }
 
 void _init_unused_pins(void) {
