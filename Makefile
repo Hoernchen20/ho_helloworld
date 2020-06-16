@@ -49,9 +49,6 @@ FEATURES_REQUIRED += periph_rtc
 INCLUDES += -I$(CURDIR)/ho_helper_functions/scaling
 DIRS += $(CURDIR)/ho_helper_functions/scaling
 
-INCLUDES += -I$(CURDIR)/ho_helper_functions/get_vcc
-DIRS += $(CURDIR)/ho_helper_functions/get_vcc
-
 # Specify custom dependencies for your application here
 #APPDEPS = ho_helper_functions/scaling.h
 
