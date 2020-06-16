@@ -24,7 +24,7 @@
 
 #if defined(BOARD_BLUEPILL)
 #define ADC_VREF_INT 9
-#elif
+#else
 #define ADC_VREF_INT 6
 #define VREF_INT_CAL 0x1FF80078
 #endif
@@ -254,7 +254,7 @@ static void *_recv(void *arg) {
 float get_vcc(void) {
 #if defined(BOARD_BLUEPILL)
     float vbat = 4957.744 / adc_sample(ADC_VREF_INT, ADC_RES_12BIT);
-#elif
+#else
     uint16_t *vref_int_cal = ((uint16_t*) ((uint32_t) 0x1FF80078));
     float vbat = 3.0 * *vref_int_cal / adc_sample(ADC_LINE(ADC_VREF_INT), ADC_RES_12BIT);
 #endif
@@ -264,10 +264,10 @@ float get_vcc(void) {
 void _init_unused_pins(void) {
     gpio_t unused_pins[] = {
 #if defined(BOARD_BLUEPILL)
-        //GPIO_PIN(PORT_A, 0), OUT0
-        //GPIO_PIN(PORT_A, 1), OUT1
-        //GPIO_PIN(PORT_A, 2), OUT2
-        //GPIO_PIN(PORT_A, 3), OUT3
+        GPIO_PIN(PORT_A, 0),
+        GPIO_PIN(PORT_A, 1),
+        GPIO_PIN(PORT_A, 2),
+        GPIO_PIN(PORT_A, 3),
         GPIO_PIN(PORT_A, 4),
         GPIO_PIN(PORT_A, 5),
         GPIO_PIN(PORT_A, 6),
@@ -295,8 +295,11 @@ void _init_unused_pins(void) {
         //GPIO_PIN(PORT_B, 13), SCK
         //GPIO_PIN(PORT_B, 14), MISO
         //GPIO_PIN(PORT_B, 15), MOSI
-        GPIO_PIN(PORT_C, 13)};
+        GPIO_PIN(PORT_C, 13)
+#else
+        GPIO_PIN(PORT_A, 0)
 #endif
+    };
     for (uint8_t i = 0; i < (sizeof(unused_pins) / sizeof(gpio_t)); i++) {
         gpio_init(unused_pins[i], GPIO_IN_PD);
     }
