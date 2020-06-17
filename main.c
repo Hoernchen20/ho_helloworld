@@ -25,8 +25,8 @@
 #if defined(BOARD_BLUEPILL)
 #define ADC_VREF_INT 9
 #else
-#define ADC_VREF_INT 6
-#define VREF_INT_CAL 0x1FF80078
+#define ADC_VREF_INT 7
+#define VREF_INT_CAL ((uint16_t *) ((uint32_t) 0x1FF80078))
 #endif
 
 #ifndef DEFAULT_PERIOD_SENDING
@@ -255,8 +255,8 @@ float get_vcc(void) {
 #if defined(BOARD_BLUEPILL)
     float vbat = 4957.744 / adc_sample(ADC_VREF_INT, ADC_RES_12BIT);
 #else
-    uint16_t *vref_int_cal = ((uint16_t*) ((uint32_t) 0x1FF80078));
-    float vbat = 3.0 * *vref_int_cal / adc_sample(ADC_LINE(ADC_VREF_INT), ADC_RES_12BIT);
+    uint16_t *vref_int_cal = VREF_INT_CAL;
+    float vbat = 3.0 * *vref_int_cal / adc_sample(ADC_VREF_INT, ADC_RES_12BIT);
 #endif
     return vbat;
 }
