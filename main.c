@@ -296,6 +296,58 @@ void _init_unused_pins(void) {
         //GPIO_PIN(PORT_B, 14), MISO
         //GPIO_PIN(PORT_B, 15), MOSI
         GPIO_PIN(PORT_C, 13)
+#elif defined(BOARD_NUCLEO_L073RZ)
+        GPIO_PIN(PORT_A, 0),
+        GPIO_PIN(PORT_A, 1),
+        GPIO_PIN(PORT_A, 2),
+        GPIO_PIN(PORT_A, 3),
+        //GPIO_PIN(PORT_A, 4), NSS
+        //GPIO_PIN(PORT_A, 5), SCK
+        //GPIO_PIN(PORT_A, 6), MISO
+        //GPIO_PIN(PORT_A, 7), MOSI
+        GPIO_PIN(PORT_A, 8),
+        GPIO_PIN(PORT_A, 9),
+        GPIO_PIN(PORT_A, 10),
+        GPIO_PIN(PORT_A, 11),
+        GPIO_PIN(PORT_A, 12),
+        GPIO_PIN(PORT_A, 13),
+        GPIO_PIN(PORT_A, 14),
+        GPIO_PIN(PORT_A, 15),
+        GPIO_PIN(PORT_B, 0),
+        GPIO_PIN(PORT_B, 1),
+        GPIO_PIN(PORT_B, 2),
+        GPIO_PIN(PORT_B, 3),
+        GPIO_PIN(PORT_B, 4),
+        GPIO_PIN(PORT_B, 5),
+        GPIO_PIN(PORT_B, 6),
+        GPIO_PIN(PORT_B, 7),
+        GPIO_PIN(PORT_B, 8),
+        GPIO_PIN(PORT_B, 9),
+        GPIO_PIN(PORT_B, 10),
+        GPIO_PIN(PORT_B, 11),
+        GPIO_PIN(PORT_B, 12),
+        GPIO_PIN(PORT_B, 13),
+        GPIO_PIN(PORT_B, 14),
+        GPIO_PIN(PORT_B, 15),
+        GPIO_PIN(PORT_C, 0),
+        GPIO_PIN(PORT_C, 1),
+        GPIO_PIN(PORT_C, 2),
+        GPIO_PIN(PORT_C, 3),
+        GPIO_PIN(PORT_C, 4),
+        GPIO_PIN(PORT_C, 5),
+        //GPIO_PIN(PORT_C, 6), DIO0
+        //GPIO_PIN(PORT_C, 7), DIO1
+        //GPIO_PIN(PORT_C, 8), DIO2
+        //GPIO_PIN(PORT_C, 9), RESET
+        GPIO_PIN(PORT_C, 10),
+        GPIO_PIN(PORT_C, 11),
+        GPIO_PIN(PORT_C, 12),
+        GPIO_PIN(PORT_C, 13),
+        //GPIO_PIN(PORT_C, 14), RTC crystal
+        //GPIO_PIN(PORT_C, 15), RTC crystal
+        //GPIO_PIN(PORT_D, 2), MOSFET
+        GPIO_PIN(PORT_H, 0),
+        GPIO_PIN(PORT_H, 1)
 #else
         GPIO_PIN(PORT_A, 0)
 #endif
