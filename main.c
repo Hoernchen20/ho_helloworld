@@ -20,7 +20,8 @@
 /* Private define ----------------------------------------------------*/
 #define SENDER_PRIO (THREAD_PRIORITY_MAIN - 1)
 #define RECV_MSG_QUEUE (4U)
-#define ON_TIME 4
+#define ON_TIME (3)
+#define PM_LOCK_LEVEL (1)
 
 #if defined(BOARD_BLUEPILL)
 #define ADC_VREF_INT 9
@@ -128,6 +129,10 @@ int main(void) {
 
 static void rtc_cb(void *arg) {
     (void)arg;
+
+    /* block sleep level mode until the next sending cycle has completed */
+    pm_block(PM_LOCK_LEVEL);
+
     msg_t msg;
     msg_send(&msg, sender_pid);
 }
@@ -190,14 +195,12 @@ static void *sender(void *arg) {
             message[1] = (uint8_t)(vbat);
             _send_message(2);
         }
-        /* wait some time to give receive thread time to work */
-        xtimer_sleep(1);
 
         /* Schedule the next wake-up alarm */
         if (_prepare_next_alarm() == 0) {
             /* going to deep sleep */
             puts("Going to sleep");
-            pm_set(1);
+            pm_unblock(PM_LOCK_LEVEL);
         } else {
             /* rtc can not set, try reboot */
             pm_reboot();
@@ -217,34 +220,44 @@ static void *_recv(void *arg) {
 
     while (1) {
         /* blocks until some data is received */
-        semtech_loramac_recv(&loramac);
-        loramac.rx_data.payload[loramac.rx_data.payload_len] = 0;
-        puts("Data received:");
-        for (uint8_t i = 0; i < loramac.rx_data.payload_len; i++) {
-            print_byte_hex(loramac.rx_data.payload[i]);
-        }
-        puts("\nPort:");
-        print_u32_dec((uint32_t)loramac.rx_data.port);
-        puts("");
+        switch (semtech_loramac_recv(&loramac)) {
+            case SEMTECH_LORAMAC_RX_DATA:
+                loramac.rx_data.payload[loramac.rx_data.payload_len] = 0;
+                printf("Data received: %s, port: %d\n",
+                        (char *)loramac.rx_data.payload, loramac.rx_data.port);
 
-        /* process received data */
-        switch (loramac.rx_data.port) {
-            case 1: /* resolution */
-                received_resolution = loramac.rx_data.payload[0];
-                if (received_resolution <= 1) {
-                    resolution = received_resolution;
+                /* process received data */
+                switch (loramac.rx_data.port) {
+                    case 1: /* resolution */
+                        received_resolution = loramac.rx_data.payload[0];
+                        if (received_resolution <= 1) {
+                            resolution = received_resolution;
+                        }
+                        break;
+
+                    case 2: /* time of period sending */
+                        received_interval = (loramac.rx_data.payload[0] << 8) + loramac.rx_data.payload[1];
+                        if (received_interval >= 3) {
+                            interval_sec = received_interval * 10;
+                        }
+                        break;
+
+                    case 3: /* System reboot */
+                        if (loramac.rx_data.payload[0] == 1) {
+                            pm_reboot();
+                        }
+                        break;
+                    
+                    default:
+                        break;
                 }
                 break;
-            case 2: /* time of period sending */
-                received_interval = (loramac.rx_data.payload[0] << 8) + loramac.rx_data.payload[1];
-                if (received_interval >= 3) {
-                    interval_sec = received_interval * 10;
-                }
+
+            case SEMTECH_LORAMAC_RX_CONFIRMED:
+                puts("Received ACK from network");
                 break;
-            case 3: /* System reboot */
-                if (loramac.rx_data.payload[0] == 1) {
-                    pm_reboot();
-                }
+
+            default:
                 break;
         }
     }
@@ -299,7 +312,7 @@ void _init_unused_pins(void) {
 #elif defined(BOARD_NUCLEO_L073RZ)
         GPIO_PIN(PORT_A, 0),
         GPIO_PIN(PORT_A, 1),
-        GPIO_PIN(PORT_A, 2),
+        //GPIO_PIN(PORT_A, 2),
         GPIO_PIN(PORT_A, 3),
         //GPIO_PIN(PORT_A, 4), NSS
         //GPIO_PIN(PORT_A, 5), SCK
