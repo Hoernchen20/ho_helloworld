@@ -43,6 +43,7 @@ USEMODULE += semtech_loramac_rx
 #USEMODULE += stdio_null
 USEMODULE += sx1276
 USEMODULE += ho_scaling
+USEMODULE += xtimer
 
 FEATURES_REQUIRED += periph_adc
 FEATURES_REQUIRED += periph_rtc
